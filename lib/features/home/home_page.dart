@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_demo/features/mask/mask_page.dart';
+import 'package:flutter_demo/features/photo_browser/photo_page.dart';
 import 'package:tuple/tuple.dart';
 
 enum HomeListRowType {
+  /// 遮罩
   mask,
+  /// 大图游览
+  photoBrowse
 }
 
 class HomePage extends StatelessWidget {
-  HomePage({Key? key}) : super(key: key);
+  const HomePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +42,22 @@ class HomePage extends StatelessWidget {
             Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) {
-                  return MaskPage();
+                  return const MaskPage();
+                },
+              ),
+            );
+          },
+        ),
+      ),
+      Tuple2<HomeListRowType, Widget>(
+        HomeListRowType.photoBrowse,
+        ListTile(
+          title: const Text("大图浏览"),
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) {
+                  return PhotoPage();
                 },
               ),
             );
