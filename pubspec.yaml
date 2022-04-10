@@ -34,7 +34,10 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
+  # 元祖
   tuple: ^2.0.0
+  # 滚到指定的index（https://pub.dev/packages/scrollable_positioned_list）
+  scrollable_positioned_list: ^0.2.3
 
 dev_dependencies:
   flutter_test:
