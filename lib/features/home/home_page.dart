@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_demo/features/mask/mask_page.dart';
 import 'package:flutter_demo/features/photo_browser/photo_page.dart';
+import 'package:flutter_demo/features/vertical_flip/vertical_flip_page.dart';
 import 'package:tuple/tuple.dart';
 
 enum HomeListRowType {
   /// 遮罩
   mask,
   /// 大图游览
-  photoBrowse
+  photoBrowse,
+  /// 上下翻页
+  verticalFlip,
 }
 
 class HomePage extends StatelessWidget {
@@ -58,6 +61,21 @@ class HomePage extends StatelessWidget {
               MaterialPageRoute(
                 builder: (context) {
                   return PhotoPage();
+                },
+              ),
+            );
+          },
+        ),
+      ),
+      Tuple2<HomeListRowType, Widget>(
+        HomeListRowType.verticalFlip,
+        ListTile(
+          title: const Text("上下翻页"),
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) {
+                  return VerticalFlipPage();
                 },
               ),
             );
