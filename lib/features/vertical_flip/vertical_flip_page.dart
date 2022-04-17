@@ -3,6 +3,11 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_demo/utils/color_utils.dart';
 
+enum VerticalFlipShowingType {
+  aaa,
+  bbb,
+}
+
 class VerticalFlipPage extends StatefulWidget {
   VerticalFlipPage({Key? key}) : super(key: key);
 
@@ -19,53 +24,18 @@ class _VerticalFlipPageState extends State<VerticalFlipPage> {
   /// header翻页视图的总高
   double get headerFlipHeight => headerFlipHeightA + headerFlipHeightB;
 
-  /// 当前header翻页视图显示的视图下标
-  int headerFlipIndex = 0;
+  /// 当前header翻页视图显示的视图类型
+  VerticalFlipShowingType headerFlipShowingType = VerticalFlipShowingType.aaa;
 
   /// 是否是从最顶部开始滚动的
   bool isStartScrollAtTop = false;
-
-  @override
-  void initState() {
-    super.initState();
-    scrollController.addListener(() {
-      var offset = scrollController.offset;
-
-      if (headerFlipIndex == 0) {
-        if (offset > headerFlipThreshold) {
-          setState(() {
-            headerFlipIndex = 1;
-          });
-          scrollController.jumpTo(0);
-        }
-      } else {
-        if (!isStartScrollAtTop) {
-          return;
-        }
-        if (offset < -headerFlipThreshold) {
-          setState(() {
-            headerFlipIndex = 0;
-          });
-          scrollController.jumpTo(0);
-        }
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    scrollController.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: NotificationListener<ScrollNotification>(
         onNotification: (ScrollNotification notification) {
-          if (notification is ScrollStartNotification) {
-            isStartScrollAtTop = notification.metrics.pixels == 0;
-          }
+          _handleListScroll(notification);
           return false; // return true 会导致进度条将失效
         },
         child: CustomScrollView(
@@ -86,7 +56,10 @@ class _VerticalFlipPageState extends State<VerticalFlipPage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           setState(() {
-            headerFlipIndex = headerFlipIndex == 0 ? 1 : 0;
+            headerFlipShowingType =
+                headerFlipShowingType == VerticalFlipShowingType.aaa
+                    ? VerticalFlipShowingType.bbb
+                    : VerticalFlipShowingType.aaa;
           });
         },
         child: const Icon(Icons.wifi_protected_setup),
@@ -99,7 +72,9 @@ class _VerticalFlipPageState extends State<VerticalFlipPage> {
     // AnimatedContainer A
     return AnimatedContainer(
       duration: duration,
-      height: headerFlipIndex == 0 ? headerFlipHeightA : headerFlipHeightB,
+      height: headerFlipShowingType == VerticalFlipShowingType.aaa
+          ? headerFlipHeightA
+          : headerFlipHeightB,
       child: Stack(
         clipBehavior: Clip.none,
         children: [
@@ -115,7 +90,9 @@ class _VerticalFlipPageState extends State<VerticalFlipPage> {
                 // AnimatedContainer B
                 AnimatedContainer(
                   duration: duration,
-                  height: headerFlipIndex == 0 ? headerFlipHeightB : 0,
+                  height: headerFlipShowingType == VerticalFlipShowingType.aaa
+                      ? headerFlipHeightB
+                      : 0,
                 ),
                 SizedBox(
                   height: headerFlipHeightA,
@@ -137,6 +114,32 @@ class _VerticalFlipPageState extends State<VerticalFlipPage> {
         ],
       ),
     );
+  }
+
+  void _handleListScroll(ScrollNotification notification) {
+    var offset = notification.metrics.pixels;
+    if (notification is ScrollStartNotification) {
+      isStartScrollAtTop = offset == 0;
+    } else {
+      if (headerFlipShowingType == VerticalFlipShowingType.aaa) {
+        if (offset > headerFlipThreshold) {
+          setState(() {
+            headerFlipShowingType = VerticalFlipShowingType.bbb;
+          });
+          scrollController.jumpTo(0);
+        }
+      } else {
+        if (!isStartScrollAtTop) {
+          return;
+        }
+        if (offset < -headerFlipThreshold) {
+          setState(() {
+            headerFlipShowingType = VerticalFlipShowingType.aaa;
+          });
+          scrollController.jumpTo(0);
+        }
+      }
+    }
   }
 }
 
