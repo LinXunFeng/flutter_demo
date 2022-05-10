@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_demo/features/mask/mask_page.dart';
 import 'package:flutter_demo/features/photo_browser/photo_page.dart';
+import 'package:flutter_demo/features/sticky_menu/sticky_menu_page.dart';
 import 'package:flutter_demo/features/vertical_flip/vertical_flip_page.dart';
 import 'package:tuple/tuple.dart';
 
@@ -81,7 +82,22 @@ class HomePage extends StatelessWidget {
             );
           },
         ),
-      )
+      ),
+      Tuple2<HomeListRowType, Widget>(
+        HomeListRowType.verticalFlip,
+        ListTile(
+          title: const Text("吸顶菜单"),
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) {
+                  return StickyMenuPage();
+                },
+              ),
+            );
+          },
+        ),
+      ),
     ];
   }
 }
