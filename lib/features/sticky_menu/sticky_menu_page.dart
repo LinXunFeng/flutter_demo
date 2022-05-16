@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_demo/widgets/sliver_header_delegate.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class StickyMenuPage extends StatefulWidget {
   const StickyMenuPage({Key? key}) : super(key: key);
@@ -26,6 +28,13 @@ class _StickyMenuPageState extends State<StickyMenuPage> {
 
   final ScrollController _pageController = ScrollController();
 
+  final RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
+
+  double _bottomPadding = 0;
+
+  final _sliverListGlobalKey = GlobalKey();
+
   @override
   void initState() {
     super.initState();
@@ -43,12 +52,38 @@ class _StickyMenuPageState extends State<StickyMenuPage> {
     return Scaffold(
       body: Stack(
         children: [
-          CustomScrollView(
-            controller: _pageController,
-            slivers: [
-              _buildSliverPersistentHeader(context),
-              _buildContentSliverList(),
-            ],
+          NotificationListener<ScrollNotification>(
+            onNotification: (ScrollNotification notification) {
+              if (notification.depth == 0) {
+                var minScrollExtent = notification.metrics.minScrollExtent;
+                var maxScrollExtent = notification.metrics.maxScrollExtent;
+                var extentInside = notification.metrics.extentInside;
+                var viewportDimension = notification.metrics.viewportDimension;
+                var extentAfter = notification.metrics.extentAfter;
+
+                print("minScrollExtent -- $minScrollExtent");
+                print("maxScrollExtent -- $maxScrollExtent");
+                print("extentInside -- $extentInside");
+                print("viewportDimension -- $viewportDimension");
+                print("extentAfter -- $extentAfter");
+              }
+              return false;
+            },
+            child: SmartRefresher(
+              controller: _refreshController,
+              enablePullDown: false,
+              enablePullUp: false,
+              child: CustomScrollView(
+                controller: _pageController,
+                slivers: [
+                  _buildSliverPersistentHeader(context),
+                  SliverPadding(
+                    padding: EdgeInsets.only(bottom: _bottomPadding),
+                    sliver: _buildContentSliverList(),
+                  ),
+                ],
+              ),
+            ),
           ),
           Container(
             color: Colors.grey.withOpacity(_navBgAlpha),
@@ -63,6 +98,47 @@ class _StickyMenuPageState extends State<StickyMenuPage> {
             ),
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.add),
+        onPressed: () {
+          // final mq = MediaQuery.of(context);
+          // _pageController.animateTo(
+          //   _bannerViewHeight - mq.padding.top - _navContentHeight,
+          //   duration: const Duration(milliseconds: 250),
+          //   curve: Curves.easeIn,
+          // );
+
+          var renderObj = _sliverListGlobalKey.currentContext?.findRenderObject();
+          if (renderObj == null) return;
+          if (renderObj is! RenderSliverList) return;
+          var constraints = renderObj.constraints;
+          var geometry = renderObj.geometry;
+          double contentSize = geometry?.scrollExtent ?? 0;
+          double listViewHeight = geometry?.paintExtent ?? 0;
+          contentSize - listViewHeight;
+          final navAndMenuDistance = _getNavAndMenuDistance();
+          if (contentSize > listViewHeight) {
+            var padding = contentSize - listViewHeight;
+            if (padding < navAndMenuDistance) {
+              setState(() {
+                _bottomPadding = navAndMenuDistance - padding;
+              });
+            } else {
+              setState(() {
+                _bottomPadding = 0;
+              });
+            }
+          } else {
+            final mq = MediaQuery.of(context);
+            setState(() {
+              _bottomPadding = mq.size.height -
+                  constraints.precedingScrollExtent -
+                  listViewHeight +
+                  navAndMenuDistance;
+            });
+          }
+        },
       ),
     );
   }
@@ -162,10 +238,12 @@ class _StickyMenuPageState extends State<StickyMenuPage> {
   /// 内容列表
   SliverList _buildContentSliverList() {
     return SliverList(
+      key: _sliverListGlobalKey,
       delegate: SliverChildBuilderDelegate(
         (context, index) {
           return ListTile(title: Text("index -- $index"));
         },
+        childCount: 2,
       ),
     );
   }
@@ -187,19 +265,23 @@ class _StickyMenuPageState extends State<StickyMenuPage> {
     );
   }
 
+  double _getNavAndMenuDistance() {
+    final mq = MediaQuery.of(context);
+    return _bannerViewHeight - mq.padding.top - _navContentHeight;
+  }
+
   void _pageDidScroll() {
     final offset = _pageController.offset;
-    final mq = MediaQuery.of(context);
-    final _navHeight = mq.padding.top + _navContentHeight + _menuViewHeight;
+    final _navAndMenuDistance = _getNavAndMenuDistance();
     double _newNavBgAlpha = 0;
     if (offset < 0) {
       // 到顶下拉
       _newNavBgAlpha = 0;
-    } else if (offset >= _navHeight) {
+    } else if (offset >= _navAndMenuDistance) {
       // 已经上拉超过阈值
       _newNavBgAlpha = 1;
     } else {
-      _newNavBgAlpha = offset / _navHeight;
+      _newNavBgAlpha = offset / _navAndMenuDistance;
     }
     if (_navBgAlpha != _newNavBgAlpha) {
       setState(() {

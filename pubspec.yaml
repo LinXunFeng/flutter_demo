@@ -40,6 +40,8 @@ dependencies:
   scrollable_positioned_list: ^0.2.3
   # 图片拓展（https://pub.flutter-io.cn/packages/extended_image）
   extended_image: ^6.0.2+1
+  # 刷新控件（https://github.com/peng8350/flutter_pulltorefresh）
+  pull_to_refresh: ^2.0.0
 
 dev_dependencies:
   flutter_test:
