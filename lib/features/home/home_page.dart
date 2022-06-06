@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_demo/features/mask/mask_page.dart';
+import 'package:flutter_demo/features/nested_scrollview/nested_scrollview_page.dart';
 import 'package:flutter_demo/features/photo_browser/photo_page.dart';
 import 'package:flutter_demo/features/sticky_menu/sticky_menu_page.dart';
 import 'package:flutter_demo/features/vertical_flip/vertical_flip_page.dart';
+import 'package:flutter_demo/features/video_auto_play_list/video_auto_play_list_page.dart';
 import 'package:tuple/tuple.dart';
 
 enum HomeListRowType {
-  /// 遮罩
+  // 遮罩
   mask,
-  /// 大图游览
+  // 大图游览
   photoBrowse,
-  /// 上下翻页
+  // 上下翻页
   verticalFlip,
+  // 视频自动播放列表
+  videoAutoPlayList,
 }
 
 class HomePage extends StatelessWidget {
@@ -91,7 +95,37 @@ class HomePage extends StatelessWidget {
             Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) {
-                  return StickyMenuPage();
+                  return const StickyMenuPage();
+                },
+              ),
+            );
+          },
+        ),
+      ),
+      Tuple2<HomeListRowType, Widget>(
+        HomeListRowType.videoAutoPlayList,
+        ListTile(
+          title: const Text("视频自动播放列表"),
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) {
+                  return const VideoAutoPlayListPage();
+                },
+              ),
+            );
+          },
+        ),
+      ),
+      Tuple2<HomeListRowType, Widget>(
+        HomeListRowType.videoAutoPlayList,
+        ListTile(
+          title: const Text("NestedScrollView"),
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) {
+                  return NestedScrollViewPage();
                 },
               ),
             );
