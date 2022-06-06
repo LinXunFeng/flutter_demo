@@ -116,7 +116,6 @@ class _StickyMenuPageState extends State<StickyMenuPage> {
           var geometry = renderObj.geometry;
           double contentSize = geometry?.scrollExtent ?? 0;
           double listViewHeight = geometry?.paintExtent ?? 0;
-          contentSize - listViewHeight;
           final navAndMenuDistance = _getNavAndMenuDistance();
           if (contentSize > listViewHeight) {
             var padding = contentSize - listViewHeight;
