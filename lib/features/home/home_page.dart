@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_demo/features/chat_list/chat_list_page.dart';
+import 'package:flutter_demo/features/inner_shadow/inner_shadow_page.dart';
+import 'package:flutter_demo/features/list_cover_bg/list_cover_bg_page.dart';
 import 'package:flutter_demo/features/mask/mask_page.dart';
 import 'package:flutter_demo/features/nested_scrollview/nested_scrollview_page.dart';
 import 'package:flutter_demo/features/photo_browser/photo_page.dart';
 import 'package:flutter_demo/features/sticky_menu/sticky_menu_page.dart';
 import 'package:flutter_demo/features/vertical_flip/vertical_flip_page.dart';
 import 'package:flutter_demo/features/video_auto_play_list/video_auto_play_list_page.dart';
-import 'package:tuple/tuple.dart';
 
 enum HomeListRowType {
   // 遮罩
@@ -14,12 +16,34 @@ enum HomeListRowType {
   photoBrowse,
   // 上下翻页
   verticalFlip,
+  // 吸顶菜单
+  stickyMenu,
   // 视频自动播放列表
   videoAutoPlayList,
+  // 嵌套滚动视图
+  nestedScrollView,
+  // 内阴影
+  innetShadow,
+  // 列表视图中的背景覆盖
+  listCoverBg,
+  // 聊天列表
+  chatList,
 }
 
 class HomePage extends StatelessWidget {
-  const HomePage({Key? key}) : super(key: key);
+  HomePage({Key? key}) : super(key: key);
+
+  final List<HomeListRowType> rowTypeArr = [
+    HomeListRowType.mask,
+    HomeListRowType.photoBrowse,
+    HomeListRowType.verticalFlip,
+    HomeListRowType.stickyMenu,
+    HomeListRowType.videoAutoPlayList,
+    HomeListRowType.nestedScrollView,
+    HomeListRowType.innetShadow,
+    HomeListRowType.listCoverBg,
+    HomeListRowType.chatList,
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +53,7 @@ class HomePage extends StatelessWidget {
       body: ListView.separated(
         itemCount: rowDataArr.length,
         itemBuilder: (context, index) {
-          return rowDataArr[index].item2;
+          return rowDataArr[index];
         },
         separatorBuilder: (context, index) {
           return Container(color: Colors.grey, height: 0.5);
@@ -38,100 +62,62 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  List<Tuple2<HomeListRowType, Widget>> _buildListViewRows(
+  List<Widget> _buildListViewRows(
     BuildContext context,
   ) {
-    return [
-      Tuple2<HomeListRowType, Widget>(
-        HomeListRowType.mask,
-        ListTile(
-          title: const Text("遮罩"),
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) {
-                  return const MaskPage();
-                },
-              ),
-            );
-          },
-        ),
-      ),
-      Tuple2<HomeListRowType, Widget>(
-        HomeListRowType.photoBrowse,
-        ListTile(
-          title: const Text("大图浏览"),
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) {
-                  return PhotoPage();
-                },
-              ),
-            );
-          },
-        ),
-      ),
-      Tuple2<HomeListRowType, Widget>(
-        HomeListRowType.verticalFlip,
-        ListTile(
-          title: const Text("上下翻页"),
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) {
-                  return VerticalFlipPage();
-                },
-              ),
-            );
-          },
-        ),
-      ),
-      Tuple2<HomeListRowType, Widget>(
-        HomeListRowType.verticalFlip,
-        ListTile(
-          title: const Text("吸顶菜单"),
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) {
-                  return const StickyMenuPage();
-                },
-              ),
-            );
-          },
-        ),
-      ),
-      Tuple2<HomeListRowType, Widget>(
-        HomeListRowType.videoAutoPlayList,
-        ListTile(
-          title: const Text("视频自动播放列表"),
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) {
-                  return const VideoAutoPlayListPage();
-                },
-              ),
-            );
-          },
-        ),
-      ),
-      Tuple2<HomeListRowType, Widget>(
-        HomeListRowType.videoAutoPlayList,
-        ListTile(
-          title: const Text("NestedScrollView"),
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) {
-                  return NestedScrollViewPage();
-                },
-              ),
-            );
-          },
-        ),
-      ),
-    ];
+    return rowTypeArr.map((type) {
+      String title = '';
+      Widget page;
+      switch (type) {
+        case HomeListRowType.mask:
+          title = '遮罩';
+          page = const MaskPage();
+          break;
+        case HomeListRowType.photoBrowse:
+          title = '大图浏览';
+          page = PhotoPage();
+          break;
+        case HomeListRowType.verticalFlip:
+          title = '上下翻页';
+          page = VerticalFlipPage();
+          break;
+        case HomeListRowType.stickyMenu:
+          title = '吸顶菜单';
+          page = const StickyMenuPage();
+          break;
+        case HomeListRowType.videoAutoPlayList:
+          title = '视频自动播放列表';
+          page = const VideoAutoPlayListPage();
+          break;
+        case HomeListRowType.nestedScrollView:
+          title = 'NestedScrollView';
+          page = const NestedScrollViewPage();
+          break;
+        case HomeListRowType.innetShadow:
+          title = '内阴影';
+          page = const InnerShadowPage();
+          break;
+        case HomeListRowType.listCoverBg:
+          title = '列表视图中的背景覆盖';
+          page = const ListCoverBgPage();
+          break;
+        case HomeListRowType.chatList:
+          title = '聊天列表页';
+          page = ChatListPage();
+          break;
+      }
+      return ListTile(
+        title: Text(title),
+        onTap: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) {
+                return page;
+              },
+            ),
+          );
+        },
+      );
+    }).toList();
   }
 }
