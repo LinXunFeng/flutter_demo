@@ -6,6 +6,7 @@ import 'package:flutter_demo/features/mask/mask_page.dart';
 import 'package:flutter_demo/features/nested_scrollview/nested_scrollview_page.dart';
 import 'package:flutter_demo/features/photo_browser/photo_page.dart';
 import 'package:flutter_demo/features/sticky_menu/sticky_menu_page.dart';
+import 'package:flutter_demo/features/chat_text_field/chat_text_field_page.dart';
 import 'package:flutter_demo/features/vertical_flip/vertical_flip_page.dart';
 import 'package:flutter_demo/features/video_auto_play_list/video_auto_play_list_page.dart';
 
@@ -28,6 +29,8 @@ enum HomeListRowType {
   listCoverBg,
   // 聊天列表
   chatList,
+  // 聊天输入框
+  chatTextField,
 }
 
 class HomePage extends StatelessWidget {
@@ -43,6 +46,7 @@ class HomePage extends StatelessWidget {
     HomeListRowType.innetShadow,
     HomeListRowType.listCoverBg,
     HomeListRowType.chatList,
+    HomeListRowType.chatTextField,
   ];
 
   @override
@@ -104,6 +108,10 @@ class HomePage extends StatelessWidget {
         case HomeListRowType.chatList:
           title = '聊天列表页';
           page = ChatListPage();
+          break;
+        case HomeListRowType.chatTextField:
+          title = '聊天输入框';
+          page = const ChatTextFieldPage();
           break;
       }
       return ListTile(
