@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_demo/widgets/sliver_header_delegate.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class StickyMenuPage extends StatefulWidget {
   const StickyMenuPage({Key? key}) : super(key: key);
@@ -27,9 +26,6 @@ class _StickyMenuPageState extends State<StickyMenuPage> {
   bool _isShowNavTitle = false;
 
   final ScrollController _pageController = ScrollController();
-
-  final RefreshController _refreshController =
-      RefreshController(initialRefresh: false);
 
   double _bottomPadding = 0;
 
@@ -69,20 +65,15 @@ class _StickyMenuPageState extends State<StickyMenuPage> {
               }
               return false;
             },
-            child: SmartRefresher(
-              controller: _refreshController,
-              enablePullDown: false,
-              enablePullUp: false,
-              child: CustomScrollView(
-                controller: _pageController,
-                slivers: [
-                  _buildSliverPersistentHeader(context),
-                  SliverPadding(
-                    padding: EdgeInsets.only(bottom: _bottomPadding),
-                    sliver: _buildContentSliverList(),
-                  ),
-                ],
-              ),
+            child: CustomScrollView(
+              controller: _pageController,
+              slivers: [
+                _buildSliverPersistentHeader(context),
+                SliverPadding(
+                  padding: EdgeInsets.only(bottom: _bottomPadding),
+                  sliver: _buildContentSliverList(),
+                ),
+              ],
             ),
           ),
           Container(
@@ -109,7 +100,8 @@ class _StickyMenuPageState extends State<StickyMenuPage> {
           //   curve: Curves.easeIn,
           // );
 
-          var renderObj = _sliverListGlobalKey.currentContext?.findRenderObject();
+          var renderObj =
+              _sliverListGlobalKey.currentContext?.findRenderObject();
           if (renderObj == null) return;
           if (renderObj is! RenderSliverList) return;
           var constraints = renderObj.constraints;
