@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_demo/features/chat_list/chat_list_page.dart';
+import 'package:flutter_demo/features/column_gap/column_gap_page.dart';
 import 'package:flutter_demo/features/inner_shadow/inner_shadow_page.dart';
 import 'package:flutter_demo/features/list_cover_bg/list_cover_bg_page.dart';
 import 'package:flutter_demo/features/mask/mask_page.dart';
@@ -31,12 +32,15 @@ enum HomeListRowType {
   chatList,
   // 聊天输入框
   chatTextField,
+  // Column缝隙
+  columnGap,
 }
 
 class HomePage extends StatelessWidget {
   HomePage({Key? key}) : super(key: key);
 
   final List<HomeListRowType> rowTypeArr = [
+    HomeListRowType.columnGap,
     HomeListRowType.mask,
     HomeListRowType.photoBrowse,
     HomeListRowType.verticalFlip,
@@ -73,6 +77,10 @@ class HomePage extends StatelessWidget {
       String title = '';
       Widget page;
       switch (type) {
+        case HomeListRowType.columnGap:
+          title = 'Column缝隙';
+          page = const ColumnGapPage();
+          break;
         case HomeListRowType.mask:
           title = '遮罩';
           page = const MaskPage();
